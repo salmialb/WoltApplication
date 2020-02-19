@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Hello Wolt!</title>
+  </head>
+  <script src="https://unpkg.com/react@16.9.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16.9.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="stylesheet" href="css/main.css" />
+  <script src="restaurants.js"></script>
+  <script type="text/javascript" src="restaurants.js"></script>
+  <body>
+    <div id="demo"></div>
+    <script type="text/babel">
+      var jsonObj = restaurants;
+
+      function Restaurant(props) {
+        const online = props.online;
+        if (online == true) {
+          return (
+            <div className="container">
+              <img src={props.image} style={{ border: "3px solid #00ff00" }} />
+              <div className="centered-top">{props.name}</div>
+              <p className="centered-bottom"> {props.description}</p>
+            </div>
+          );
+        } else {
+          return (
+            <div className="container">
+              <img src={props.image} style={{ border: "3px solid #ff0000" }} />
+              <div className="centered-top">{props.name}</div>
+              <p className="centered-bottom"> {props.description}</p>
+            </div>
+          );
+        }
+      }
+
+      function Loop() {
+        var restaurants = [];
+        for (var i = 0; i <= jsonObj.length - 1; i++) {
+          restaurants.push(jsonObj[i]);
+        }
+
+        var elements = [];
+        elements = restaurants.map(Restaurant);
+        return elements;
+      }
+      function sortAsc() {
+        restaurants.sort((a, b) => a.name.localeCompare(b.name));
+      }
+      function sortDesc() {
+        restaurants.sort((b, a) => a.name.localeCompare(b.name));
+      }
+
+      class App extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            header: "Unsorted",
+            body: <Loop />
+          };
+          this.updateState = this.updateState.bind(this);
+        }
+
+        updateState() {
+          if (this.state.header == "Unsorted") {
+            this.setState({ header: "A-Ö", body: <Loop /> });
+            sortAsc();
+          } else if (this.state.header == "A-Ö") {
+            this.setState({ header: "Ö-A", body: <Loop /> });
+            sortDesc();
+          } else if (this.state.header == "Ö-A") {
+            this.setState({ header: "A-Ö", body: <Loop /> });
+            sortAsc();
+          }
+        }
+
+        render() {
+          return (
+            <div>
+              <button
+                onClick={this.updateState}
+                className="centered-top-button"
+              >
+                Sort
+              </button>
+              <h1 className=".centered-top">{this.state.header}</h1>
+              <div>{this.state.body}</div>
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(<App />, document.getElementById("demo"));
+    </script>
+  </body>
+</html>
